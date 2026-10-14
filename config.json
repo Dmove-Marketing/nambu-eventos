@@ -1,40 +1,82 @@
 {
-  "project_name": "PREENCHER — Nome do projeto",
-  "project_slug": "preencher-slug",
-  "domain": "eventos.cliente.com.br",
-  "client": "PREENCHER — Cliente",
+  "project_name": "Casa Nambu",
+  "project_slug": "casa-nambu",
+  "domain": "nambueventos.com",
+  "client": "Nambu Eventos",
   "environment": "development",
   "tracking": {
-    "gtm_id": "GTM-XXXXXXX",
+    "gtm_id": "GTM-P2GM387X",
     "enabled": true
   },
   "whatsapp": {
-    "phone": "5511900000000",
-    "display_name": "PREENCHER — Cliente",
-    "avatar": "/images/whatsapp-avatar.jpg",
+    "phone": "5511976345325",
+    "display_name": "Casa Nambu",
+    "avatar": "/images/icone.png",
     "enabled": true
   },
   "forms": {
-    "lead-form": {
-      "id": "lead-form",
+    "home-form": {
+      "id": "home-form",
+      "form_name": "home-form",
+      "fonte": "Formulário /",
+      "preset": "corporativo",
+      "redirect_on_success": "",
+      "webhooks": [
+        "https://n8n.dmove.com.br/webhook/Casa-Nambu"
+      ]
+    },
+    "catering-form": {
+      "id": "catering-form",
+      "form_name": "catering-form",
+      "fonte": "Formulário /catering",
+      "preset": "corporativo",
+      "redirect_on_success": "",
+      "webhooks": [
+        "https://n8n.dmove.com.br/webhook/Casa-Nambu"
+      ]
+    },
+    "popup-937": {
+      "id": "2d7ce388",
+      "form_name": "whatsapp_catering",
+      "display_name": "Casa Nambu Online",
+      "phone": "5511976345325",
+      "fonte": "WhatsApp /catering",
+      "webhooks": [
+        "https://n8n.dmove.com.br/webhook/Casa-Nambu"
+      ]
+    },
+    "popup-126": {
+      "id": "popup-126",
+      "form_name": "popup-nambu-eventos",
+      "display_name": "Nambu Eventos Online",
+      "phone": "5511976345325",
+      "fonte": "WhatsApp /bio",
+      "webhooks": [
+        "https://n8n.dmove.com.br/webhook/Casa-Nambu"
+      ]
+    },
+    "bio-form": {
+      "id": "bio-form",
+      "form_name": "bio-form",
+      "fonte": "Formulário /bio",
       "preset": "social",
       "redirect_on_success": "",
       "webhooks": [
-        "https://server3n8n.dmove.com.br/webhook/preencher-slug"
+        "https://n8n.dmove.com.br/webhook/Casa-Nambu"
       ]
     }
   },
   "media": {
-    "cdn_base": "https://media.dmove.com.br/clients/preencher-slug"
+    "cdn_base": "https://media.dmove.com.br/clients/Eventos-Nambu/photos"
   },
   "deploy": {
     "user": "root",
     "server": "157.173.197.116",
-    "remote_path": "/var/www/eventos.cliente.com.br"
+    "remote_path": "/var/www/nambueventos.com"
   },
   "meta": {
-    "created_at": "",
-    "last_updated": "",
+    "created_at": "2026-10-09",
+    "last_updated": "2026-10-09",
     "owner": "Dmove"
   }
 }

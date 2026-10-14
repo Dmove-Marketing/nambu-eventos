@@ -1,0 +1,114 @@
+/* ============================================================
+   NAMBU EVENTOS — Design Tokens
+   Sobrescreve os tokens do global.css para este projeto.
+   ============================================================ */
+
+/* Poppins + Roboto via Google Fonts — carregado no <head> de cada página */
+:root {
+  /* Paleta Nambu (extraída do Elementor kit post-93.css) */
+  --nambu-primary:      #555940;
+  --nambu-primary-dark: #393A2B;
+  --nambu-secondary:    #54595F;
+  --nambu-muted:        #7A7A7A;
+  --nambu-olive:        #5F695A;
+  --nambu-cream:        #F1ECE7;
+  --nambu-bg:           #F0F2ED;
+
+  /* Override design system base */
+  --color-primary:      #555940;
+  --color-primary-dark: #393A2B;
+  --color-secondary:    #5F695A;
+  --bg-primary:         #ffffff;
+  --bg-secondary:       #F0F2ED;
+  --text-primary:       #555940;
+  --text-secondary:     #5F695A;
+  --text-muted:         #7A7A7A;
+
+  /* Tipografia */
+  --font-display: 'Poppins', 'Segoe UI', sans-serif;
+  --font-body:    'Roboto', 'Segoe UI', sans-serif;
+
+  /* Container: 1140px (Elementor kit) */
+  --container-max:     1140px;
+  --container-padding: 24px;
+}
+
+/* Sobrescreve heading padrão do global.css */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+/* Scrollbar customizada (post-93.css) */
+body::-webkit-scrollbar       { width: 10px; }
+body::-webkit-scrollbar-track { background: #F0F2ED; }
+body::-webkit-scrollbar-thumb {
+  background-color: #363636;
+  border-radius: 10px;
+  border: 2px solid #fff;
+}
+
+/* ── Componentes Nambu ───────────────────────────────────── */
+
+/* Divider decorativo (100px, 3px solid primary) */
+.nambu-divider {
+  width: 100px;
+  height: 3px;
+  background: var(--nambu-primary);
+  border: none;
+  margin: 0;
+}
+.nambu-divider--light {
+  background: var(--nambu-cream);
+}
+.nambu-divider--center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Botão principal Nambu */
+.nambu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--nambu-olive);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 24px 32px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s;
+  line-height: 1;
+}
+.nambu-btn:hover { background: var(--nambu-primary); }
+
+/* Container padrão Nambu (conteúdo 1140px; outer = 1140 + 2×padding) */
+.nambu-container {
+  max-width: calc(var(--container-max) + 2 * var(--container-padding));
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+/* Ícone causa (bg #393A2B, corner-radius top-right) */
+.causa-icon {
+  background: #393A2B;
+  border-radius: 0 110px 0 0;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.causa-icon img { width: 60%; }
+
+/* ── Responsivo ─────────────────────────────────────────── */
+@media (max-width: 767px) {
+  :root {
+    --container-padding: 20px;
+  }
+}

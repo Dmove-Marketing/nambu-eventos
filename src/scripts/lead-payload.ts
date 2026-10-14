@@ -13,6 +13,7 @@ export const keyMap: Record<string, string> = {
   tipo_evento: 'Tipo de evento',
   'tipo de evento': 'Tipo de evento',
   convidados: 'Convidados',
+  budget: 'Budget',
   empresa: 'Empresa',
   mensagem: 'Mensagem',
   detalhes_adicionais: 'Mensagem',
@@ -23,20 +24,43 @@ export const keyMap: Record<string, string> = {
 // normais (formulário da página) e o popup de WhatsApp, para que todos ofereçam
 // exatamente a mesma lista. Não inclui o placeholder "Selecione...".
 export const tipoEventoOptions: { value: string; label: string }[] = [
-  { value: 'Aniversario',                          label: 'Aniversário' },
-  { value: 'Aniversario debutante',                label: 'Aniversário debutante' },
-  { value: 'Bodas',                                label: 'Bodas' },
-  { value: 'Casamento',                            label: 'Casamento' },
-  { value: 'Confraternizacao corporativa',         label: 'Confraternização corporativa' },
-  { value: 'Confraternizacao social',              label: 'Confraternização social' },
-  { value: 'Corporativo',                          label: 'Corporativo' },
-  { value: 'Feiras e Exposicoes',                  label: 'Feiras e Exposições' },
-  { value: 'Masterclass e Palestras',              label: 'Masterclass e Palestras' },
-  { value: 'Mentorias e Treinamentos',             label: 'Mentorias e Treinamentos' },
-  { value: 'Offsite corporativo',                  label: 'Offsite corporativo' },
-  { value: 'Reunioes de Networking',               label: 'Reuniões de Networking' },
-  { value: 'Workshops, Conferencias e Seminarios', label: 'Workshops, Conferências e Seminários' },
-  { value: 'Outros',                               label: 'Outros' },
+  { value: 'Confraternização corporativa', label: 'Confraternização corporativa' },
+  { value: 'Evento corporativo',           label: 'Evento corporativo' },
+  { value: 'Outro (Informe no campo mensagem)', label: 'Outro (Informe no campo mensagem)' },
+];
+
+export const tipoEventoOptionsCatering: { value: string; label: string }[] = [
+  { value: 'Aniversário',                       label: 'Aniversário' },
+  { value: 'Aniversário debutante',             label: 'Aniversário debutante' },
+  { value: 'Bodas',                             label: 'Bodas' },
+  { value: 'Casamento',                         label: 'Casamento' },
+  { value: 'Confraternização social',           label: 'Confraternização social' },
+  { value: 'Confraternização corporativa',      label: 'Confraternização corporativa' },
+  { value: 'Evento corporativo',                label: 'Evento corporativo' },
+  { value: 'Locação do espaço',                 label: 'Locação do espaço' },
+  { value: 'Outro (Informe no campo mensagem)', label: 'Outro (Informe no campo mensagem)' },
+];
+
+export const tipoEventoOptionsBio: { value: string; label: string }[] = [
+  { value: 'Corporativo',                       label: 'Corporativo' },
+  { value: 'Social',                            label: 'Social' },
+  { value: 'Casamento',                         label: 'Casamento' },
+  { value: 'Outro (Informe no campo mensagem)', label: 'Outro (Informe no campo mensagem)' },
+];
+
+export const convidadosOptions: { value: string; label: string }[] = [
+  { value: '10 a 50 convidados',    label: '10 a 50 convidados' },
+  { value: '51 a 100 convidados',   label: '51 a 100 convidados' },
+  { value: '101 a 300 convidados',  label: '101 a 300 convidados' },
+  { value: 'Mais de 300 convidados', label: 'Mais de 300 convidados' },
+];
+
+export const budgetOptions: { value: string; label: string }[] = [
+  { value: '5k a 10k',  label: '5k a 10k' },
+  { value: '11k a 30k', label: '11k a 30k' },
+  { value: '31k a 60k', label: '31k a 60k' },
+  { value: '61k a 100k', label: '61k a 100k' },
+  { value: '101k+',     label: '101k+' },
 ];
 
 export const trackingParamKeys = [

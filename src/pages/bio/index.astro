@@ -1,0 +1,309 @@
+---
+import Base from '../../layouts/Base.astro';
+import config from '../../../config.json';
+import '../../styles/nambu.css';
+import { tipoEventoOptionsBio } from '../../scripts/lead-payload';
+
+const CDN = config.media.cdn_base;
+const popupConfig = config.forms['popup-126'];
+const bioFormConfig = config.forms['bio-form'];
+const popupWebhookUrl = popupConfig.webhooks[0];
+const bioFormWebhookUrl = bioFormConfig.webhooks[0];
+
+const waFields = [
+  { key: 'nome',  type: 'text',  label: 'Olá! Qual é o seu nome? 😊', placeholder: 'Seu nome' },
+  { key: 'tel',   type: 'phone', label: 'E o seu WhatsApp com DDD?', placeholder: '(11) 99999-9999' },
+  { key: 'email', type: 'email', label: 'E o seu e-mail?', placeholder: 'seu@email.com' },
+  { key: 'tipo_evento', type: 'select', label: 'Que tipo de evento você precisa? 🥂', options: tipoEventoOptionsBio },
+];
+---
+
+<Base
+  title="Bio – Nambu Eventos"
+  description="Acesse o site, solicite um orçamento de catering ou fale pelo WhatsApp com a equipe da Casa Nambu."
+  canonical="https://nambueventos.com/bio/"
+  theme="dark"
+  whatsAppCustomFields={waFields}
+  whatsAppFonte={popupConfig.fonte}
+  whatsAppFormName={popupConfig.form_name}
+  whatsAppSubmitUrl={popupWebhookUrl}
+>
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@400;500;600&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <main class="bio-page" style={`background-image:url('${CDN}/Gastronomia_1.webp')`}>
+    <div class="bio-overlay"></div>
+    <div class="bio-inner">
+
+      <a href="https://nambueventos.com/" class="bio-logo-link" aria-label="Casa Nambu">
+        <img
+          src={`${CDN}/casanambu-FINAL-07-e1724342755171.webp`}
+          alt="Nambu Eventos"
+          class="bio-logo"
+          width="400"
+          height="38"
+          fetchpriority="high"
+        />
+      </a>
+
+      <div class="bio-actions">
+        <a href="/catering/" class="bio-btn bio-btn--buffet">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+          Buffet
+        </a>
+        <button id="bio-wa-btn" type="button" class="bio-btn bio-btn--wa">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.852L.057 23.428a.5.5 0 0 0 .614.614l5.576-1.475A11.943 11.943 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.65-.49-5.178-1.348l-.372-.214-3.862 1.022 1.022-3.732-.228-.384A9.945 9.945 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+          </svg>
+          Atendimento | Orçamento
+        </button>
+      </div>
+
+      <div class="bio-form-wrap">
+        <h2 class="bio-form-title">Solicite um contato</h2>
+        <form
+          class="bio-form"
+          data-form-id={bioFormConfig.id}
+          data-submit-url={bioFormWebhookUrl}
+          data-fonte={bioFormConfig.fonte}
+          data-project={config.project_slug}
+          novalidate
+        >
+          <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off" />
+
+          <div class="bio-field">
+            <input name="empresa" type="text" placeholder="Empresa" aria-label="Empresa" autocomplete="organization" />
+          </div>
+          <div class="bio-field">
+            <input name="nome" type="text" placeholder="Nome completo" aria-label="Nome" required autocomplete="name" />
+          </div>
+          <div class="bio-field">
+            <input name="whatsapp" type="tel" placeholder="WhatsApp:" aria-label="WhatsApp" required autocomplete="tel" />
+          </div>
+          <div class="bio-field">
+            <input name="email" type="email" placeholder="E-mail" aria-label="E-mail" required autocomplete="email" />
+          </div>
+          <div class="bio-field">
+            <select name="tipo_evento" aria-label="Tipo de evento" required>
+              <option value="" disabled selected>Tipo de evento (selecione)</option>
+              {tipoEventoOptionsBio.map((o) => <option value={o.value}>{o.label}</option>)}
+            </select>
+          </div>
+          <div class="bio-field">
+            <input name="data_evento" type="text" placeholder="Data do evento:" aria-label="Data do evento" required autocomplete="off" />
+          </div>
+          <div class="bio-field">
+            <input name="convidados" type="text" inputmode="numeric" placeholder="Nº de convidados" aria-label="Convidados" required />
+          </div>
+          <div class="bio-field">
+            <textarea name="mensagem" rows={3} placeholder="Detalhes adicionais:" aria-label="Mensagem"></textarea>
+          </div>
+
+          <div class="bio-field bio-field--actions">
+            <button type="button" class="bio-submit-btn form-submit">
+              <span class="btn-text">Solicitar Contato</span>
+              <span class="btn-loading" style="display:none">Enviando...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <Fragment slot="scripts">
+    <script>
+      import { initForms } from '../../scripts/forms';
+
+      document.addEventListener('DOMContentLoaded', () => {
+        initForms();
+
+        const waBtn = document.getElementById('bio-wa-btn');
+        const waToggle = document.getElementById('wa-toggle');
+        waBtn?.addEventListener('click', () => waToggle?.click());
+      });
+    </script>
+  </Fragment>
+</Base>
+
+<style is:global>
+  body { margin: 0; padding: 0; }
+
+  /* Hide the floating WA button on the bio page (popup is still accessible via the button) */
+  .bio-page ~ * #wa-toggle,
+  #wa-widget #wa-toggle { display: none !important; }
+
+  .bio-page {
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bio-overlay {
+    position: absolute;
+    inset: 0;
+    background: #000000;
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  .bio-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding: 60px 20px;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .bio-logo-link { display: block; text-align: center; }
+  .bio-logo {
+    max-width: 400px;
+    width: 80%;
+    height: auto;
+    filter: brightness(0) invert(1);
+    opacity: 0.95;
+  }
+
+  /* ── Action buttons ────────────────────────────────── */
+  .bio-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+  }
+
+  .bio-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+    padding: 0 15px;
+    color: #ffffff;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .bio-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 1);
+  }
+  .bio-btn--buffet  { width: 102px; height: 46px; }
+  .bio-btn--wa      { width: 252px; height: 46px; }
+
+  /* ── Form ─────────────────────────────────────────── */
+  .bio-form-wrap { width: 100%; }
+
+  .bio-form-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
+    text-align: center;
+    margin: 0 0 16px;
+  }
+
+  .bio-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .bio-field { margin-bottom: 10px; }
+
+  .bio-field input,
+  .bio-field select,
+  .bio-field textarea {
+    width: 100%;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    border-radius: 8px;
+    padding: 10px 14px;
+    height: 44px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #ffffff;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+  }
+  .bio-field input::placeholder,
+  .bio-field textarea::placeholder { color: rgba(255, 255, 255, 0.55); }
+  .bio-field input:focus,
+  .bio-field select:focus,
+  .bio-field textarea:focus { border-color: rgba(255, 255, 255, 1); }
+
+  .bio-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23ffffff' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-color: transparent;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+  .bio-field select option { color: #333; background: #fff; }
+
+  .bio-field textarea {
+    height: 80px;
+    min-height: 80px;
+    resize: none;
+  }
+
+  .bio-field--actions { margin-top: 4px; }
+
+  .bio-submit-btn {
+    width: 100%;
+    height: 46px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+    color: #ffffff;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .bio-submit-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 1);
+  }
+
+  @media (max-width: 480px) {
+    .bio-logo { width: 75%; }
+    .bio-inner { padding: 40px 16px; gap: 24px; }
+    .bio-btn { font-size: 15px; }
+    .bio-btn--buffet { width: 98px; height: 45px; }
+    .bio-btn--wa     { width: 238px; height: 45px; }
+  }
+</style>

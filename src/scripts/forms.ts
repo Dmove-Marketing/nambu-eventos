@@ -252,7 +252,7 @@ export function initForms() {
         Data: dateStr,
         'Horário': timeStr,
         'URL da página': window.location.href,
-        'IP do usuário': clientIp,
+        'IP remoto': clientIp,
         'Agente de usuário': navigator.userAgent,
         'Desenvolvido por': 'Dmove',
         form_id: formId,

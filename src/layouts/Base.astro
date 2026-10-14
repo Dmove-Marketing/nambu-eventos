@@ -35,6 +35,18 @@ interface Props {
   whatsAppShowEmpresaField?: boolean;
   /** Oculta o widget de WhatsApp (ex.: home de triagem, que só roteia) */
   hideWhatsApp?: boolean;
+  /** Substitui os campos padrão da conversa do widget WhatsApp */
+  whatsAppCustomFields?: any[];
+  /** Fonte estática enviada ao n8n pelo widget WhatsApp */
+  whatsAppFonte?: string;
+  /** form_id / form_name do widget WhatsApp enviado ao n8n */
+  whatsAppFormName?: string;
+  /** URL de webhook para o widget WhatsApp (sobrescreve o default do config) */
+  whatsAppSubmitUrl?: string;
+  /** Mensagens de introdução personalizadas para o widget WhatsApp */
+  whatsAppIntroMessages?: string[];
+  /** Mensagem de observação exibida após as mensagens de introdução */
+  whatsAppObservationMessage?: string;
 }
 
 const {
@@ -49,6 +61,12 @@ const {
   whatsAppMessage,
   whatsAppShowEmpresaField = false,
   hideWhatsApp = false,
+  whatsAppCustomFields,
+  whatsAppFonte,
+  whatsAppFormName,
+  whatsAppSubmitUrl,
+  whatsAppIntroMessages,
+  whatsAppObservationMessage,
 } = Astro.props;
 
 import config from '../../config.json';
@@ -118,7 +136,17 @@ const defaultJsonLd = {
     <slot />
 
     <!-- WhatsApp Flutuante — configurar em config.json > whatsapp -->
-    {!hideWhatsApp && <WhatsAppWidget showEmpresaField={whatsAppShowEmpresaField} />}
+    {!hideWhatsApp && (
+      <WhatsAppWidget
+        showEmpresaField={whatsAppShowEmpresaField}
+        customFields={whatsAppCustomFields}
+        staticFonte={whatsAppFonte}
+        formName={whatsAppFormName}
+        submitUrl={whatsAppSubmitUrl}
+        introMessages={whatsAppIntroMessages}
+        observationMessage={whatsAppObservationMessage}
+      />
+    )}
 
     <!-- Scripts adicionais -->
     <slot name="scripts" />

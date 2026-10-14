@@ -1,6 +1,15 @@
 ---
 import config from '../../../config.json';
-import { trackingParamKeys, tipoEventoOptions } from '../../scripts/lead-payload';
+import { trackingParamKeys, tipoEventoOptions, keyMap } from '../../scripts/lead-payload';
+
+interface WaField {
+  key: string;
+  type: string;
+  label: string;
+  placeholder?: string;
+  options?: { value: string; label: string }[];
+  chips?: string[];
+}
 
 interface Props {
   phone?: string;
@@ -8,21 +17,35 @@ interface Props {
   avatar?: string;
   submitUrl?: string;
   project?: string;
-  /** Pergunta o nome da empresa antes do nome (usado na página de eventos corporativos) */
+  /** Pergunta o nome da empresa antes do nome */
   showEmpresaField?: boolean;
+  /** Substitui os campos padrão da conversa */
+  customFields?: WaField[];
+  /** Fonte estática enviada ao n8n (sobrescreve a derivada da URL) */
+  staticFonte?: string;
+  /** form_id / form_name enviado ao n8n (default: 'form_whatsapp') */
+  formName?: string;
+  /** Mensagens de introdução personalizadas */
+  introMessages?: string[];
+  /** Mensagem de observação exibida após as mensagens de introdução */
+  observationMessage?: string;
 }
 
 const {
   phone = config.whatsapp?.phone || '5511917299858',
   displayName = config.whatsapp?.display_name || 'Atendimento',
   avatar = config.whatsapp?.avatar || '/images/whatsapp-avatar.jpg',
-  submitUrl = config.forms['lead-form']?.webhooks[0] || '',
+  submitUrl = (config.forms as any)['lead-form']?.webhooks[0] || '',
   project = config.project_slug || 'landing-page',
   showEmpresaField = false,
+  customFields,
+  staticFonte = '',
+  formName = 'form_whatsapp',
 } = Astro.props;
 
-// Roteiro da conversa: uma pergunta por campo (estilo Captura Web / Voe)
-const fields = [
+const observationMessage = Astro.props.observationMessage ?? '';
+
+const defaultFields: WaField[] = [
   ...(showEmpresaField
     ? [{ key: 'empresa', type: 'text', label: 'Qual é o nome da sua empresa?', placeholder: 'Nome da empresa' }]
     : []),
@@ -34,36 +57,24 @@ const fields = [
   { key: 'convidados', type: 'number', label: 'E quantos convidados, aproximadamente?', placeholder: 'Ex: 150', chips: ['50', '100', '150', '200', '300'] },
 ];
 
-const introMessages = [
+const fields = customFields ?? defaultFields;
+
+const introMessages = Astro.props.introMessages ?? [
   `Olá! 👋 Bem-vindo(a) à ${displayName}.`,
   'Vou te fazer algumas perguntas rápidas para preparar o seu orçamento, tudo bem?',
 ];
 ---
 
 <!-- ===== WHATSAPP FLOATING WIDGET (conversacional) ===== -->
+<div id="wa-overlay" aria-hidden="true" hidden></div>
 <div id="wa-widget" aria-label="Fale pelo WhatsApp">
-
-  <!-- Teaser (convite discreto que aparece após alguns segundos) -->
-  <div id="wa-teaser" class="wa-teaser" hidden>
-    <button class="wa-teaser__close" id="wa-teaser-close" aria-label="Dispensar mensagem">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-    <button class="wa-teaser__bubble" id="wa-teaser-open">
-      <img class="wa-teaser__avatar" src={avatar} alt="" width="36" height="36" loading="lazy" onerror="this.style.visibility='hidden'" />
-      <span class="wa-teaser__text">
-        <strong>{displayName}</strong>
-        Olá! 👋 Quer um orçamento para o seu evento?
-      </span>
-    </button>
-  </div>
 
   <!-- Botão flutuante -->
   <button id="wa-toggle" class="wa-fab" aria-label="Abrir chat WhatsApp" aria-expanded="false">
-    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true">
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-      <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.852L.057 23.428a.5.5 0 0 0 .614.614l5.576-1.475A11.943 11.943 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.65-.49-5.178-1.348l-.372-.214-3.862 1.022 1.022-3.732-.228-.384A9.945 9.945 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="52" height="52" aria-hidden="true">
+      <path fill="#25d366" d="M4.9 43.3l2.7-9.8C5.5 31 4.5 28 4.5 24 4.5 13.2 13.2 4.5 24 4.5S43.5 13.2 43.5 24 34.8 43.5 24 43.5c-3.8 0-7.4-1.1-10.4-2.9l-8.7 2.7z"/>
+      <path fill="#fff" d="M35.1 28.8c-.5-.2-2.9-1.4-3.3-1.6-.4-.1-.8-.2-1.1.2-.3.5-1.3 1.6-1.5 1.9-.3.3-.6.4-1.1.1-.5-.2-2.1-.8-4-2.5-1.5-1.3-2.5-3-2.8-3.4-.3-.5 0-.7.2-1 .2-.2.5-.6.7-.9.2-.3.3-.5.5-.8.2-.4.1-.7 0-.9-.2-.2-1.1-2.7-1.5-3.7-.4-.9-.8-.8-1.1-.8h-1c-.3 0-.9.1-1.3.5-.5.5-1.7 1.7-1.7 4s1.7 4.7 2 5c.3.4 3.4 5.2 8.3 7.3 1.1.5 2 .8 2.7 1 1.2.4 2.2.3 3 .2.9-.1 2.9-1.2 3.3-2.3.4-1.2.4-2.2.3-2.4-.1-.2-.5-.4-1.1-.6z"/>
     </svg>
-    <span class="wa-fab__badge" id="wa-badge">1</span>
   </button>
 
   <!-- Popup chat -->
@@ -73,7 +84,7 @@ const introMessages = [
     <div class="wa-header">
       <div class="wa-header__avatar">
         <span class="wa-header__avatar-fallback" aria-hidden="true">{displayName.charAt(0)}</span>
-        <img class="wa-header__avatar-img" src={avatar} alt="" width="40" height="40" loading="lazy" onerror="this.remove()" />
+        <img class="wa-header__avatar-img" src={avatar} alt="" width="40" height="40" loading="lazy" onerror="this.remove()" style="background:#063A33" />
         <span class="wa-header__status" aria-hidden="true"></span>
       </div>
       <div class="wa-header__info">
@@ -114,21 +125,18 @@ const introMessages = [
             <line x1="3" y1="10" x2="21" y2="10"></line>
           </svg>
         </div>
-        <button class="wa-send" id="wa-send" aria-label="Enviar resposta">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-        </button>
+        <button class="wa-send" id="wa-send" aria-label="Enviar resposta">Seguir</button>
       </div>
       <p class="wa-inputbar__error" id="wa-error" role="alert" hidden></p>
     </div>
   </div>
 </div>
 
-<script define:vars={{ submitUrl, project, trackingParamKeys, phone, fields, introMessages, avatar }}>
+<script define:vars={{ submitUrl, project, trackingParamKeys, keyMap, phone, fields, introMessages, avatar, staticFonte, formName, observationMessage }}>
   /* ── Elementos ─────────────────────────────── */
   const toggle    = document.getElementById('wa-toggle');
   const popup     = document.getElementById('wa-popup');
   const closeBtn  = document.getElementById('wa-close');
-  const badge     = document.getElementById('wa-badge');
   const chat      = document.getElementById('wa-chat');
   const inputbar  = document.getElementById('wa-inputbar');
   const inputLbl  = document.getElementById('wa-inputbar-label');
@@ -139,7 +147,7 @@ const introMessages = [
   const chipsBox  = document.getElementById('wa-chips');
   const sendBtn   = document.getElementById('wa-send');
   const errorEl   = document.getElementById('wa-error');
-  const teaser    = document.getElementById('wa-teaser');
+  const overlay   = document.getElementById('wa-overlay');
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const wait = (ms) => new Promise((r) => setTimeout(r, reduceMotion ? 0 : ms));
@@ -177,6 +185,24 @@ const introMessages = [
     chat.appendChild(row);
     scrollChat();
     return row;
+  }
+
+  function observationBubble(text) {
+    const row = document.createElement('div');
+    row.className = 'wa-row wa-row--agent';
+    const img = document.createElement('img');
+    img.className = 'wa-row__avatar';
+    img.src = avatar;
+    img.alt = '';
+    img.width = 24; img.height = 24;
+    img.onerror = () => { img.style.visibility = 'hidden'; };
+    row.appendChild(img);
+    const b = document.createElement('div');
+    b.className = 'wa-msg wa-msg--obs';
+    b.textContent = text;
+    row.appendChild(b);
+    chat.appendChild(row);
+    scrollChat();
   }
 
   function bubbleHtml(who, node) {
@@ -372,26 +398,31 @@ const introMessages = [
     const qs = new URLSearchParams();
     trackingParamKeys.forEach((k) => { if (tracking[k]) qs.set(k, tracking[k]); });
     const slug = window.location.pathname.replace(/\/$/, '').split('/').filter(Boolean)[0];
-    const pageSource = `Landing page/${slug || 'casamentos'}`;
+    const pageSource = staticFonte || `Landing page/${slug || 'casamentos'}`;
     const fonte = qs.toString() ? `${pageSource}?${qs.toString()}` : pageSource;
 
     const now = new Date();
+
+    // Monta payload dinâmico: cada resposta é mapeada pelo keyMap
+    const answerPayload = {};
+    for (const [key, answer] of Object.entries(a)) {
+      if (!answer || !answer.value) continue;
+      // tel → WhatsApp
+      const lookupKey = key === 'tel' ? 'telefone' : key;
+      const mappedKey = keyMap[lookupKey] || keyMap[lookupKey.toLowerCase()] || (lookupKey.charAt(0).toUpperCase() + lookupKey.slice(1));
+      answerPayload[mappedKey] = answer.value;
+    }
+
     const payload = {
-      ...(a.empresa ? { Empresa: a.empresa.value } : {}),
-      Nome: a.nome?.value || '',
-      WhatsApp: a.tel?.value || '',
-      'E-mail': a.email?.value || '',
-      'Data do evento': a.data_evento?.value || '',
-      Convidados: a.convidados?.value || '',
-      'Tipo de evento': a.tipo_evento?.value || '',
+      ...answerPayload,
       Fonte: fonte,
       Data: now.toLocaleDateString('pt-BR'),
       'Horário': now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
       'URL da página': window.location.href,
       'Agente de usuário': navigator.userAgent,
       'Desenvolvido por': 'Dmove',
-      form_id: 'form_whatsapp',
-      form_name: 'form_whatsapp',
+      form_id: formName,
+      form_name: formName,
     };
     ['fbc', 'fbp', 'external_id', 'event_id'].forEach((k) => { if (tracking[k]) payload[k] = tracking[k]; });
 
@@ -410,7 +441,7 @@ const introMessages = [
     window.dataLayer.push({
       event: 'form_submit',
       form_source: 'whatsapp',
-      form_id: 'form_whatsapp',
+      form_id: formName,
       project: project,
       tipo_evento: a.tipo_evento?.value || '',
       event_id: tracking['event_id'] || window.__page_event_id || '',
@@ -424,6 +455,7 @@ const introMessages = [
 
     // Replay instantâneo do que já aconteceu nesta sessão (recarregou a página)
     introMessages.forEach((m) => bubble('agent', m, true));
+    if (observationMessage) observationBubble(observationMessage);
     fields.slice(0, state.idx).forEach((f) => {
       bubble('agent', f.label, true);
       const ans = state.answers[f.key];
@@ -438,10 +470,15 @@ const introMessages = [
 
     if (state.idx === 0) {
       window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ event: 'form_start', form_source: 'whatsapp', project: project, form_id: 'form_whatsapp', form_name: 'form_whatsapp' });
+      window.dataLayer.push({ event: 'form_start', form_source: 'whatsapp', project: project, form_id: formName, form_name: formName });
       // repete a intro "ao vivo": remove o replay e digita de verdade
       chat.innerHTML = '';
       for (const m of introMessages) await agentSays(m);
+      if (observationMessage) {
+        await wait(400);
+        observationBubble(observationMessage);
+        await wait(400);
+      }
     }
 
     while (state.idx < fields.length) {
@@ -512,11 +549,10 @@ const introMessages = [
 
   /* ── Abrir / fechar ─────────────────────────── */
   function openPopup() {
-    hideTeaser(false);
     popup.hidden = false;
+    if (overlay) overlay.hidden = false;
     requestAnimationFrame(() => requestAnimationFrame(() => popup.classList.add('wa-popup--open')));
     toggle.setAttribute('aria-expanded', 'true');
-    badge.style.display = 'none';
     lockScroll(true);
     runConversation();
     if (activeField) setTimeout(() => currentInputEl().focus({ preventScroll: true }), 300);
@@ -525,6 +561,7 @@ const introMessages = [
 
   function closePopup() {
     popup.classList.remove('wa-popup--open');
+    if (overlay) overlay.hidden = true;
     toggle.setAttribute('aria-expanded', 'false');
     lockScroll(false);
     setTimeout(() => {
@@ -538,30 +575,6 @@ const introMessages = [
     popup.hidden ? openPopup() : closePopup();
   });
   closeBtn.addEventListener('click', closePopup);
-
-  /* ── Teaser ─────────────────────────────────── */
-  function hideTeaser(persist) {
-    if (!teaser || teaser.hidden) return;
-    teaser.classList.remove('wa-teaser--in');
-    setTimeout(() => { teaser.hidden = true; }, 220);
-    if (persist) { try { sessionStorage.setItem('wa_teaser_off', '1'); } catch (_) {} }
-  }
-  if (teaser && !sessionStorage.getItem('wa_teaser_off') && state.idx === 0 && !state.done) {
-    setTimeout(() => {
-      if (popup.hidden) {
-        teaser.hidden = false;
-        requestAnimationFrame(() => teaser.classList.add('wa-teaser--in'));
-      }
-    }, 4500);
-  }
-  document.getElementById('wa-teaser-close')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    hideTeaser(true);
-  });
-  document.getElementById('wa-teaser-open')?.addEventListener('click', () => {
-    try { sessionStorage.setItem('wa_teaser_off', '1'); } catch (_) {}
-    openPopup();
-  });
 
   // O calendário (flatpickr) é anexado ao <body>, FORA do popup. Enquanto ele
   // estiver aberto, nenhum clique/ESC deve fechar o popup. O estado vem do
@@ -639,7 +652,7 @@ const introMessages = [
   :root {
     --wa-green:      #25D366;
     --wa-green-dark: #128C7E;
-    --wa-primary:    #075E54;   /* cor primária: header e balão do usuário */
+    --wa-primary:    #063A33;   /* cor primária: header e balão do usuário */
     --wa-bg:         #ECE5DD;   /* fundo clássico do chat */
     --wa-text:       #222;
     --wa-subtext:    #667781;
@@ -662,56 +675,32 @@ const introMessages = [
     z-index: 2147483000;
     width: 58px;
     height: 58px;
-    border-radius: 50%;
-    background: var(--wa-green);
-    color: #fff;
+    border-radius: 0;
+    background: transparent;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 20px rgba(37,211,102,.45), 0 2px 8px rgba(0,0,0,.25);
-    transition: transform .15s, box-shadow .2s;
+    box-shadow: none;
+    transition: transform .15s;
+    padding: 0;
   }
-  .wa-fab:hover {
-    transform: scale(1.08);
-    box-shadow: 0 6px 28px rgba(37,211,102,.55), 0 4px 12px rgba(0,0,0,.28);
-  }
+  .wa-fab:hover { transform: scale(1.08); }
   .wa-fab:active { transform: scale(.96); }
 
-  .wa-fab::before {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    background: rgba(37,211,102,.3);
-    animation: wa-pulse 2.4s ease-out infinite;
-  }
-  @keyframes wa-pulse {
-    0%   { transform: scale(1); opacity: .6; }
-    70%  { transform: scale(1.45); opacity: 0; }
-    100% { opacity: 0; }
-  }
+  .wa-fab__badge { display: none !important; }
+  .wa-teaser { display: none !important; }
 
-  .wa-fab__badge {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    background: #FF3B30;
-    color: #fff;
-    font-size: .65rem;
-    font-weight: 700;
-    font-family: inherit;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #fff;
+  #wa-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 2147482997;
   }
+  #wa-overlay[hidden] { display: none !important; }
 
-  /* ── Teaser ─────────────────────────────────── */
+  /* ── Teaser (hidden via CSS safety) ─────────── */
   .wa-teaser {
     position: fixed;
     bottom: 94px;
@@ -878,9 +867,9 @@ const introMessages = [
     min-width: 0;
   }
   .wa-header__info strong {
-    font-size: 14px;
-    font-family: inherit;
-    font-weight: 500;
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -894,7 +883,7 @@ const introMessages = [
     border-radius: 50%;
   }
   .wa-header__presence {
-    font-size: 11px;
+    font-size: 12px;
     color: #a7f3d0;
     font-family: inherit;
     display: flex;
@@ -1055,8 +1044,10 @@ const introMessages = [
     flex: 1;
     min-width: 0;
     border: 1px solid var(--wa-border);
-    border-radius: 20px;
+    border-radius: 7px;
     padding: 8px 14px;
+    height: 40px;
+    background: #E7FFE7;
     font-family: inherit;
     font-size: 13px;
     color: var(--wa-text);
@@ -1121,21 +1112,21 @@ const introMessages = [
   .wa-datefield__icon:hover { opacity: 1; }
 
   .wa-send {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+    height: 40px;
+    padding: 0 18px;
+    border-radius: 7px;
     border: none;
-    background: var(--wa-primary);
+    background: #063A33;
     color: #fff;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     flex-shrink: 0;
-    transition: transform .15s, background .2s;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    transition: opacity .15s;
   }
-  .wa-send:hover { background: var(--wa-green-dark); transform: scale(1.06); }
-  .wa-send:active { transform: scale(.94); }
+  .wa-send:hover { opacity: 0.88; }
+  .wa-send:active { opacity: 0.75; }
 
   .wa-inputbar__error {
     font-family: inherit;
@@ -1158,30 +1149,36 @@ const introMessages = [
   .wa-chips::-webkit-scrollbar-track { background: transparent; }
   .wa-chips::-webkit-scrollbar-thumb { background: #bbb; border-radius: 4px; }
   .wa-chips :global(.wa-chip) {
-    padding: 6px 14px;
-    border-radius: 16px;
+    padding: 0 14px;
+    height: 40px;
+    border-radius: 7px;
     font-family: inherit;
     font-size: 13px;
-    border: 1px solid var(--wa-primary);
-    background: transparent;
+    border: none;
+    background: #E7FFE7;
     color: var(--wa-primary);
     cursor: pointer;
-    transition: background .15s, color .15s;
+    display: inline-flex;
+    align-items: center;
+    transition: background .15s;
   }
   .wa-chips :global(.wa-chip:hover) {
-    background: var(--wa-primary);
-    color: #fff;
+    background: #c8f5c8;
+  }
+
+  .wa-chat :global(.wa-msg--obs) {
+    background: rgb(97,107,92) !important;
+    color: var(--nambu-cream, #F1ECE7) !important;
+    border-radius: 12px 12px 12px 2px;
   }
 
   /* ── Acessibilidade: movimento reduzido ─────── */
   @media (prefers-reduced-motion: reduce) {
-    .wa-fab::before,
     .wa-header__presence-dot { animation: none; }
     .wa-chat :global(.wa-row),
     .wa-chat :global(.wa-dot),
     .wa-inputbar { animation: none; }
     .wa-popup,
-    .wa-teaser,
     .wa-fab { transition-duration: .01s; }
   }
 
@@ -1220,8 +1217,9 @@ const introMessages = [
       height: 44px;
     }
     .wa-chips :global(.wa-chip) {
-      padding: 9px 16px;
+      padding: 0 16px;
       font-size: 14px;
+      height: 44px;
     }
     .wa-inputbar { padding: 10px 12px calc(12px + env(safe-area-inset-bottom, 0px) / 2); }
     .wa-header__close { padding: 10px; }

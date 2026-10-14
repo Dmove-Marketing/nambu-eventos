@@ -1,18 +1,1048 @@
 ---
-// Página placeholder do template. Substitua pelo conteúdo do projeto.
-// Fluxo completo: veja CLAUDE.md.
 import Base from '../layouts/Base.astro';
+import config from '../../config.json';
+import '../styles/nambu.css';
+import { tipoEventoOptions, convidadosOptions, budgetOptions } from '../scripts/lead-payload';
+
+const CDN = config.media.cdn_base;
+const formConfig = config.forms['home-form'];
+const webhookUrl = formConfig.webhooks[0];
+
+const waFields = [
+  { key: 'tipo_evento', type: 'select', label: 'Que tipo de evento você precisa? 🥂', options: tipoEventoOptions },
+  { key: 'data_evento', type: 'date', label: 'Qual é a data prevista? 📅', placeholder: 'dd/mm/aaaa' },
+  { key: 'convidados', type: 'select', label: 'Quantos convidados aproximadamente?', options: convidadosOptions },
+  { key: 'budget', type: 'select', label: 'Qual é o budget disponível?', options: budgetOptions },
+  { key: 'empresa', type: 'text', label: 'Qual é o nome da sua empresa?', placeholder: 'Nome da empresa' },
+  { key: 'nome',   type: 'text',  label: 'Pra começar, qual é o seu nome? 😊', placeholder: 'Seu nome' },
+  { key: 'tel',    type: 'phone', label: 'Qual é o seu WhatsApp com DDD?', placeholder: '(11) 99999-9999' },
+  { key: 'email',  type: 'email', label: 'E o seu e-mail?', placeholder: 'seu@email.com' },
+];
+
+const clientLogos = [
+  'Captura-de-Tela-2024-08-22-as-18.09.17',
+  'Captura-de-Tela-2024-08-22-as-18.09.21',
+  'Captura-de-Tela-2024-08-22-as-18.09.24',
+  'Captura-de-Tela-2024-08-22-as-18.09.27',
+  'Captura-de-Tela-2024-08-22-as-18.09.30',
+  'Captura-de-Tela-2024-08-22-as-18.09.33',
+  'Captura-de-Tela-2024-08-22-as-18.09.36',
+  'Captura-de-Tela-2024-08-22-as-18.09.41',
+  'Captura-de-Tela-2024-08-22-as-18.09.44',
+  'Captura-de-Tela-2024-08-22-as-18.09.47',
+  'Captura-de-Tela-2024-08-22-as-18.09.50',
+  'Captura-de-Tela-2024-08-22-as-18.09.53',
+  '1-1',
+  '2',
+  '3',
+  '4',
+  '5',
+  'Design-sem-nome-12',
+];
+
+const carouselImages = [
+  { src: 'gastronomia1-1', alt: 'Gastronomia 1' },
+  { src: 'Carrossel4',     alt: 'Gastronomia' },
+  { src: 'gastronomia3',   alt: 'Gastronomia 3' },
+  { src: 'Carrossel1',     alt: 'Gastronomia' },
+  { src: 'gastronomia5',   alt: 'Gastronomia 5' },
+  { src: 'Carrossel3',     alt: 'Gastronomia' },
+  { src: 'Carrossel2',     alt: 'Gastronomia' },
+  { src: 'gastronomia8',   alt: 'Gastronomia 8' },
+  { src: 'Carrossel',      alt: 'Gastronomia' },
+];
+
+const solucoes = [
+  {
+    img: 'menu_completo',
+    title: 'Menu completo',
+    text: 'Oferecemos um menu completo, com ilhas gastronômicas, finger foods e coquetéis, para que você possa escolher a opção que melhor se adapta ao estilo do seu evento corporativo.',
+  },
+  {
+    img: 'personalizacao',
+    title: 'Personalização',
+    text: 'Oferecemos opções de pratos veganos e vegetarianos, além da possibilidade de personalizar todo o cardápio para o seu evento, garantindo a satisfação de todos.',
+  },
+  {
+    img: 'equipe_especializada',
+    title: 'Equipe especializada',
+    text: 'Nossa equipe é composta por chefs de cozinha, auxiliares e garçons, todos devidamente uniformizados e equipados com equipamentos de proteção individual.',
+  },
+  {
+    img: 'limpeza_organizacao',
+    title: 'Limpeza e organização',
+    text: 'Prezamos sempre por manter o local limpo e organizado antes, durante e após o evento.',
+  },
+  {
+    img: 'equipamentos',
+    title: 'Equipamentos',
+    text: 'Levamos todo o material necessário, como réchauds, talheres de inox, pratos de porcelana branca e taças para refrigerante, água e suco.',
+  },
+];
 ---
 
-<Base title="Dmove — Template de Landing Page" noIndex={true}>
-  <main style="min-height:100svh;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px;font-family:system-ui,sans-serif;">
-    <div style="max-width:640px;">
-      <h1 style="font-size:2rem;margin-bottom:16px;">dmove-astro-template</h1>
-      <p style="opacity:.75;line-height:1.6;">
-        Clone deste modelo pronto. Para iniciar um projeto, siga o
-        <strong>CLAUDE.md</strong>: responda o onboarding, informe onde está o HTML
-        recebido do time (Claude Design) e a pasta de destino, e a implementação segue as Fases 1–7.
-      </p>
+<Base
+  title="Gastronomia Premium para Eventos Corporativos em São Paulo | Casa Nambu"
+  description="Mais de 15 anos de experiência em gastronomia para eventos corporativos em São Paulo. Catering completo e personalizado para confraternizações, jantares e workshops."
+  canonical="https://nambueventos.com/"
+  theme="light"
+  whatsAppCustomFields={waFields}
+  whatsAppFonte="WhatsApp /"
+  whatsAppFormName="whatsapp_home"
+  whatsAppSubmitUrl={webhookUrl}
+  whatsAppIntroMessages={['Olá, vamos conversar? Por favor, preencha as informações a seguir e vamos iniciar nossa conversa no WhatsApp. Estamos ansiosos para saber mais sobre seu evento! 🎉']}
+  whatsAppObservationMessage="Observação: Atendemos somente no estado de São Paulo"
+>
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@400;500;600&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <!-- ── HEADER ─────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="nambu-container">
+      <a href="/" aria-label="Casa Nambu — Página inicial">
+        <img
+          src={`${CDN}/casanambu-FINAL-07-e1724342755171.webp`}
+          alt="Casa Nambu"
+          class="site-header__logo"
+          width="327"
+          height="31"
+          fetchpriority="high"
+        />
+      </a>
     </div>
+  </header>
+
+  <main>
+    <!-- ── HERO ──────────────────────────────────────────── -->
+    <section class="hero" style={`background-image:url('${CDN}/casa_nambu_hero.webp')`}>
+      <div class="hero__overlay"></div>
+      <div class="nambu-container hero__inner">
+        <div class="hero__text">
+          <h1 class="hero__title">Gastronomia premium para eventos corporativos em São Paulo</h1>
+          <p class="hero__subtitle">Serviços completos e personalizados para atender às necessidades da sua empresa.</p>
+          <a href="#contato" class="nambu-btn hero__cta">Solicitar orçamento</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SOBRE ──────────────────────────────────────────── -->
+    <section class="sobre">
+      <div class="nambu-container sobre__inner">
+        <h2 class="sobre__title">O sabor dos eventos de sucesso</h2>
+        <hr class="nambu-divider nambu-divider--center sobre__divider" />
+        <p class="sobre__text">Com mais de 15 anos de experiência no mercado, somos especialistas em gastronomia para eventos, unindo qualidade, criatividade e atenção aos detalhes. Nosso propósito é transformar cada ocasião em uma experiência memorável, com um cardápio feito sob medida.</p>
+      </div>
+    </section>
+
+    <!-- ── TIPOS DE EVENTO ───────────────────────────────── -->
+    <section class="event-types">
+      <div class="nambu-container">
+        <h2 class="event-types__title">Eventos corporativos que somos especialistas</h2>
+        <hr class="nambu-divider nambu-divider--light nambu-divider--center event-types__divider" />
+        <p class="event-types__caption">
+          Entregamos um serviço de catering sob medida, desde encontros intimistas para 20 pessoas até grandes eventos com 1.000 convidados.
+        </p>
+        <div class="event-types__grid">
+          <div class="event-type">
+            <img src={`${CDN}/Design-sem-nome-37.webp`} alt="Coffee Break / Brunch" class="event-type__img" loading="lazy" />
+            <span class="event-type__label">Coffee Break/Brunch</span>
+          </div>
+          <div class="event-type">
+            <img src={`${CDN}/Design-sem-nome-38.webp`} alt="Confraternização" class="event-type__img" loading="lazy" />
+            <span class="event-type__label">Confraternização</span>
+          </div>
+          <div class="event-type">
+            <img src={`${CDN}/Design-sem-nome-39.webp`} alt="Jantares" class="event-type__img" loading="lazy" />
+            <span class="event-type__label">Jantares</span>
+          </div>
+          <div class="event-type">
+            <img src={`${CDN}/Design-sem-nome-40.webp`} alt="Workshops" class="event-type__img" loading="lazy" />
+            <span class="event-type__label">Workshops</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CAUSAS ─────────────────────────────────────────── -->
+    <section class="causas">
+      <div class="nambu-container">
+        <h2 class="causas__title">Causas e compromissos que apoiamos</h2>
+        <hr class="nambu-divider nambu-divider--center causas__divider" />
+        <div class="causas__grid">
+          <div class="causa">
+            <div class="causa-icon">
+              <img src={`${CDN}/gardener.webp`} alt="" loading="lazy" />
+            </div>
+            <p class="causa__text"><strong>Compromisso com pequenos produtores:</strong> valorizamos o mercado local para garantir frescor e qualidade.</p>
+          </div>
+          <div class="causa">
+            <div class="causa-icon">
+              <img src={`${CDN}/healthy-food.webp`} alt="" loading="lazy" />
+            </div>
+            <p class="causa__text"><strong>Sustentabilidade no prato:</strong> Ingredientes orgânicos e livres de agrotóxicos, escolhidos com cuidado para seu evento.</p>
+          </div>
+          <div class="causa">
+            <div class="causa-icon">
+              <img src={`${CDN}/team.webp`} alt="" loading="lazy" />
+            </div>
+            <p class="causa__text"><strong>Liderança diversa</strong> com quadro societário 100% feminino & LGBT.</p>
+          </div>
+          <div class="causa">
+            <div class="causa-icon">
+              <img src={`${CDN}/help.webp`} alt="" loading="lazy" />
+            </div>
+            <p class="causa__text"><strong>Apoio às causas que importam:</strong> A Nambu Eventos apoia causas sociais, gerando impacto positivo na comunidade.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── GASTRONOMIA DE ALTO PADRÃO (gallery) ──────────── -->
+    <section class="gastronomy">
+      <div class="nambu-container gastronomy__head">
+        <h2 class="gastronomy__title">Gastronomia de alto padrão</h2>
+        <hr class="nambu-divider nambu-divider--light nambu-divider--center" style="margin-top:20px;margin-bottom:24px;" />
+        <p class="gastronomy__desc">Técnicas diferenciadas, ingredientes frescos e temperos únicos para proporcionar uma mistura incrível de sabores para o seu catering.</p>
+      </div>
+      <div class="carousel" aria-label="Galeria de gastronomia">
+        <div class="carousel__track" id="carousel-track">
+          {carouselImages.map((img) => (
+            <div class="carousel__item">
+              <img
+                src={`${CDN}/${img.src}.webp`}
+                alt={img.alt}
+                loading="lazy"
+                class="carousel__img"
+              />
+            </div>
+          ))}
+        </div>
+        <button class="carousel__btn carousel__btn--next" id="carousel-next" aria-label="Próximo">&#8250;</button>
+      </div>
+    </section>
+
+    <!-- ── SOLUÇÕES desktop (bege bg) ──────────────────────── -->
+    <section class="solucoes">
+      <div class="nambu-container">
+        <h2 class="solucoes__title">Soluções</h2>
+        <hr class="nambu-divider nambu-divider--center solucoes__divider" />
+        <p class="solucoes__desc">Descubra as vantagens que assegurarão um catering de alta qualidade</p>
+
+        {solucoes.map((s, i) => (
+          <div class={`solucao-row ${i % 2 === 1 ? 'solucao-row--reverse' : ''}`}>
+            <div class="solucao-row__img">
+              <img src={`${CDN}/${s.img}.webp`} alt={s.title} loading="lazy" />
+            </div>
+            <div class="solucao-row__text">
+              <h3 class="solucao-row__title">{s.title}</h3>
+              <hr class="nambu-divider solucao-row__divider" />
+              <p class="solucao-row__desc">{s.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ── SOLUÇÕES INTEGRADAS mobile (olive bg) ───────────── -->
+    <section class="solucoes-int">
+      <div class="nambu-container">
+        <h2 class="solucoes__title solucoes__title--light">Soluções integradas</h2>
+        <hr class="nambu-divider nambu-divider--light nambu-divider--center solucoes__divider" />
+        <p class="solucoes__desc solucoes__desc--light">Descubra as vantagens que assegurarão um catering de alta qualidade</p>
+
+        {solucoes.map((s, i) => (
+          <div class={`solucao-row solucao-row--int ${i % 2 === 0 ? 'solucao-row--reverse' : ''}`}>
+            <div class="solucao-row__text">
+              <h3 class="solucao-row__title solucao-row__title--light">{s.title}</h3>
+              <hr class="nambu-divider nambu-divider--light solucao-row__divider" />
+              <p class="solucao-row__desc solucao-row__desc--light">{s.text}</p>
+            </div>
+            <div class="solucao-row__img">
+              <img src={`${CDN}/${s.img}.webp`} alt={s.title} loading="lazy" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ── CLIENTES ──────────────────────────────────────── -->
+    <section class="clients">
+      <div class="nambu-container">
+        <h2 class="clients__title">Empresas que confiam em nosso trabalho</h2>
+        <div class="clients__grid">
+          {clientLogos.map((logo) => (
+            <div class="clients__logo">
+              <img
+                src={`${CDN}/${logo}.webp`}
+                alt="Cliente Nambu Eventos"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CONTATO / FORMULÁRIO ──────────────────────────── -->
+    <section class="contact" id="contato">
+      <div class="nambu-container contact__inner">
+        <div class="contact__info">
+          <h2 class="contact__title">Vamos planejar juntos a gastronomia do seu evento corporativo?</h2>
+          <hr class="nambu-divider contact__divider" />
+          <p class="contact__sub">Preencha o formulário para receber o nosso contato</p>
+          <p class="contact__obs">Observação: Atendemos somente no estado de São Paulo e não prestamos serviços para casamentos.</p>
+        </div>
+
+        <div class="contact__form-wrap">
+          <form
+            class="nambu-form"
+            data-form-id={formConfig.id}
+            data-submit-url={webhookUrl}
+            data-fonte={formConfig.fonte}
+            data-project={config.project_slug}
+            novalidate
+          >
+            <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off" />
+
+            <div class="nambu-form__field">
+              <input id="form-field-empresa" name="empresa" type="text" placeholder="Empresa" aria-label="Empresa" required />
+            </div>
+            <div class="nambu-form__field">
+              <input id="form-field-nome" name="nome" type="text" placeholder="Nome" aria-label="Nome" required autocomplete="name" />
+            </div>
+            <div class="nambu-form__field">
+              <input id="form-field-whatsapp" name="whatsapp" type="tel" placeholder="Telefone:" aria-label="WhatsApp" required autocomplete="tel" />
+            </div>
+            <div class="nambu-form__field">
+              <input id="form-field-email" name="email" type="email" placeholder="E-mail" aria-label="E-mail" required autocomplete="email" />
+            </div>
+            <div class="nambu-form__field">
+              <select id="form-field-tipo_evento" name="tipo_evento" aria-label="Tipo de evento" required>
+                <option value="" disabled selected>Tipo de evento (selecione)</option>
+                {tipoEventoOptions.map((o) => <option value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+            <div class="nambu-form__field">
+              <select id="form-field-budget" name="budget" aria-label="Budget" required>
+                <option value="" disabled selected>Qual a verba total disponível para o buffet?</option>
+                {budgetOptions.map((o) => <option value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+            <div class="nambu-form__field">
+              <input id="form-field-data_evento" name="data_evento" type="text" placeholder="Data do evento pretendida" aria-label="Data do evento" required autocomplete="off" data-flatpickr />
+            </div>
+            <div class="nambu-form__field">
+              <select id="form-field-convidados" name="convidados" aria-label="Convidados" required>
+                <option value="" disabled selected>Qual a expectativa de quantidade de convidados?</option>
+                {convidadosOptions.map((o) => <option value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+            <div class="nambu-form__field">
+              <textarea id="form-field-mensagem" name="mensagem" rows={4} placeholder="Sua mensagem (não obrigatório)" aria-label="Mensagem"></textarea>
+            </div>
+
+            <div class="nambu-form__actions">
+              <button type="button" class="nambu-btn form-submit">
+                <span class="btn-text">Enviar solicitação</span>
+                <span class="btn-loading" style="display:none">Enviando...</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <!-- ── FOOTER ────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="nambu-container site-footer__inner">
+      <img
+        src={`${CDN}/casanambu-FINAL-07-e1724342755171.webp`}
+        alt="Casa Nambu"
+        class="site-footer__logo"
+        loading="lazy"
+        width="362"
+        height="35"
+      />
+      <p class="site-footer__copy">Copyright &copy; 2025 Nambu Eventos – Todos os direitos reservados</p>
+      <p class="site-footer__dev">Desenvolvimento: <a href="https://www.dmove.com.br" target="_blank" rel="noopener">dmove.com.br</a></p>
+    </div>
+  </footer>
+
+  <Fragment slot="scripts">
+    <script>
+      import { initForms } from '../scripts/forms';
+      import flatpickr from 'flatpickr';
+      import { Portuguese } from 'flatpickr/dist/l10n/pt.js';
+      import 'flatpickr/dist/flatpickr.min.css';
+
+      document.addEventListener('DOMContentLoaded', () => {
+        initForms();
+
+        const dp = document.querySelector<HTMLInputElement>('[data-flatpickr]');
+        if (dp) {
+          flatpickr(dp, {
+            locale: Portuguese,
+            dateFormat: 'd/m/Y',
+            minDate: 'today',
+            disableMobile: false,
+            allowInput: true,
+          });
+        }
+
+        const track = document.getElementById('carousel-track') as HTMLElement | null;
+        const nextBtn = document.getElementById('carousel-next');
+        if (track && nextBtn) {
+          const scrollBy = () => {
+            const item = track.querySelector('.carousel__item') as HTMLElement | null;
+            return item ? item.offsetWidth : 460;
+          };
+          nextBtn.addEventListener('click', () => { track.scrollBy({ left: scrollBy(), behavior: 'smooth' }); });
+        }
+      });
+    </script>
+  </Fragment>
 </Base>
+
+<style is:global>
+  /* ── Header ──────────────────────────────────────────── */
+  .site-header {
+    background: var(--nambu-primary);
+    min-height: 127px;
+    display: flex;
+    align-items: center;
+  }
+  .site-header .nambu-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+  .site-header__logo {
+    width: 327px;
+    height: auto;
+    max-width: 100%;
+    display: block;
+  }
+
+  /* ── Hero ─────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    background-size: cover;
+    background-position: center center;
+    min-height: 750px;
+    display: flex;
+    align-items: center;
+  }
+  .hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: #000000;
+    opacity: 0.73;
+    pointer-events: none;
+  }
+  .hero__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+  }
+  .hero__text {
+    max-width: 660px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero__title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 48px;
+    font-weight: 600;
+    color: var(--nambu-cream);
+    line-height: 48px;
+    margin-bottom: 20px;
+  }
+  .hero__subtitle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--nambu-cream);
+    line-height: 20px;
+    margin-bottom: 40px;
+  }
+  .hero__cta {
+    background: var(--nambu-olive);
+    min-width: 201px;
+    height: 64px;
+    padding: 24px 32px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 9999px;
+  }
+  .hero__cta:hover { background: var(--nambu-primary-dark); }
+
+  /* ── Sobre ────────────────────────────────────────────── */
+  .sobre {
+    background: var(--nambu-cream);
+    min-height: 445px;
+    display: flex;
+    align-items: center;
+    padding: 60px 0;
+  }
+  .sobre__inner {
+    text-align: center;
+  }
+  .sobre__title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 48px;
+    color: var(--nambu-primary);
+  }
+  .sobre__divider {
+    margin: 20px auto;
+  }
+  .sobre__text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 30px;
+    color: var(--nambu-olive);
+    max-width: 865px;
+    margin: 0 auto;
+  }
+
+  /* ── Tipos de Evento ──────────────────────────────────── */
+  .event-types {
+    background: var(--nambu-primary);
+    padding: 60px 0;
+    min-height: 667px;
+  }
+  .event-types__title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 48px;
+    color: var(--nambu-cream);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .event-types__divider {
+    margin: 0 auto 16px;
+  }
+  .event-types__caption {
+    color: var(--nambu-cream);
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 20px;
+    text-align: center;
+    max-width: 809px;
+    margin: 0 auto 48px;
+  }
+  .event-types__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 249px);
+    gap: 48px;
+    justify-content: center;
+  }
+  .event-type__img {
+    width: 249px;
+    height: 249px;
+    object-fit: cover;
+    display: block;
+  }
+  .event-type__label {
+    display: block;
+    text-align: center;
+    color: var(--nambu-cream);
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-style: italic;
+    line-height: 22.4px;
+    margin-top: 15px;
+  }
+
+  /* ── Causas ───────────────────────────────────────────── */
+  .causas {
+    background: var(--nambu-cream);
+    padding: 60px 0;
+    min-height: 653px;
+  }
+  .causas__title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 48px;
+    color: var(--nambu-primary);
+    text-align: center;
+  }
+  .causas__divider {
+    margin: 20px auto 48px;
+  }
+  .causas__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 220px);
+    gap: 0;
+    justify-content: center;
+  }
+  .causa-icon {
+    background: #393A2B;
+    border-radius: 0 110px 0 0;
+    width: 173px;
+    height: 164px;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+  }
+  .causa-icon img {
+    width: 104px;
+    height: 104px;
+    object-fit: contain;
+  }
+  .causa__text {
+    color: var(--nambu-olive);
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+  }
+
+  /* ── Gastronomia / Gallery ────────────────────────────── */
+  .gastronomy {
+    background: var(--nambu-primary);
+    min-height: 966px;
+    padding: 80px 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .gastronomy__head {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  .gastronomy__title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 48px;
+    color: var(--nambu-cream);
+  }
+  .gastronomy__desc {
+    font-family: 'Poppins', sans-serif;
+    color: var(--nambu-cream);
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 30px;
+    max-width: 865px;
+    margin: 0 auto;
+  }
+
+  /* Carousel */
+  .carousel {
+    position: relative;
+    overflow: hidden;
+  }
+  .carousel__track {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .carousel__track::-webkit-scrollbar { display: none; }
+  .carousel__item {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    width: 460px;
+  }
+  .carousel__img {
+    width: 100%;
+    height: 504px;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+  }
+  .carousel__btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.85);
+    color: var(--nambu-primary);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: background 0.2s;
+    line-height: 1;
+  }
+  .carousel__btn:hover { background: #fff; }
+  .carousel__btn--next { right: 16px; }
+
+  /* ── Soluções desktop (show) / mobile (hide) ──────────── */
+  .solucoes {
+    padding: 60px 0;
+    background: var(--nambu-cream);
+    display: block;
+  }
+  .solucoes-int {
+    padding: 60px 0;
+    background: var(--nambu-olive);
+    display: none;
+  }
+  .solucoes__title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 48px;
+    color: var(--nambu-primary);
+    text-align: center;
+  }
+  .solucoes__title--light { color: var(--nambu-cream); }
+  .solucoes__divider {
+    margin: 20px auto 16px;
+  }
+  .solucoes__desc {
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 30px;
+    color: var(--nambu-primary);
+    text-align: center;
+    margin-bottom: 48px;
+    max-width: 865px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .solucoes__desc--light { color: var(--nambu-cream); }
+
+  .solucao-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    align-items: center;
+    margin-bottom: 0;
+  }
+  .solucao-row--reverse { direction: rtl; }
+  .solucao-row--reverse > * { direction: ltr; }
+  .solucao-row__img img {
+    width: 100%;
+    height: 422px;
+    object-fit: cover;
+    display: block;
+  }
+  .solucao-row__text {
+    padding: 50px;
+  }
+  .solucao-row__title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 48px;
+    color: var(--nambu-primary);
+  }
+  .solucao-row__title--light { color: var(--nambu-cream); }
+  .solucao-row__divider {
+    margin-top: 20px;
+  }
+  .solucao-row__desc {
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--nambu-muted);
+    margin-top: 20px;
+    line-height: 30px;
+  }
+  .solucao-row__desc--light { color: var(--nambu-cream); }
+
+  /* ── Clientes ─────────────────────────────────────────── */
+  .clients {
+    background: var(--nambu-olive);
+    padding: 60px 0;
+    box-shadow: 0 16px 32px 0 rgba(0,0,0,0.32);
+    min-height: 898px;
+  }
+  .clients__title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 48px;
+    color: var(--nambu-cream);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .clients__grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    column-gap: 32px;
+    row-gap: 43px;
+    align-items: center;
+  }
+  .clients__logo img {
+    width: 163px;
+    height: 157px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    transition: opacity 0.2s;
+  }
+  .clients__logo img:hover { opacity: 0.8; }
+
+  /* ── Contato ──────────────────────────────────────────── */
+  .contact {
+    padding: 100px 0;
+    background: var(--nambu-cream);
+    min-height: 886px;
+  }
+  .contact__inner {
+    display: grid;
+    grid-template-columns: 450px 470px;
+    gap: 80px;
+    align-items: start;
+  }
+  .contact__title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 48px;
+    color: var(--nambu-primary);
+  }
+  .contact__divider {
+    margin: 20px 0;
+  }
+  .contact__sub {
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: rgb(95, 105, 90);
+    line-height: 33px;
+    max-width: 320px;
+  }
+  .contact__obs {
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 33px;
+    background: rgb(85, 89, 64);
+    color: rgb(241, 236, 231);
+    padding: 16px 20px;
+    margin-top: 24px;
+  }
+
+  /* Form — 1 column, 470px */
+  .nambu-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .nambu-form__field {
+    margin-bottom: 8px;
+  }
+  .nambu-form__field input,
+  .nambu-form__field select,
+  .nambu-form__field textarea {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--nambu-primary);
+    border-radius: 0;
+    padding: 8px 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--nambu-primary);
+    outline: none;
+    width: 100%;
+    height: 40px;
+    transition: border-color 0.2s;
+  }
+  .nambu-form__field input:focus,
+  .nambu-form__field select:focus,
+  .nambu-form__field textarea:focus {
+    border-bottom-color: var(--nambu-olive);
+  }
+  .nambu-form__field textarea {
+    resize: none;
+    min-height: 91px;
+    height: 91px;
+    border: none;
+    border-bottom: 1px solid var(--nambu-primary);
+    padding: 8px 0;
+  }
+  .nambu-form__field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23555940' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    padding-right: 24px;
+    cursor: pointer;
+    background-color: transparent;
+  }
+  .nambu-form__actions {
+    margin-top: 8px;
+  }
+  .nambu-btn.form-submit {
+    background: var(--nambu-olive);
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 0;
+    height: 59px;
+    padding: 0 32px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .nambu-btn.form-submit:hover { background: var(--nambu-primary); }
+
+  /* ── Footer ───────────────────────────────────────────── */
+  .site-footer {
+    background: var(--nambu-olive);
+    min-height: 116px;
+    display: flex;
+    align-items: center;
+    padding: 14px 0;
+  }
+  .site-footer__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    text-align: left;
+  }
+  .site-footer__logo {
+    width: 362px;
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  .site-footer__copy,
+  .site-footer__dev {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    color: var(--nambu-cream);
+  }
+  .site-footer__dev a {
+    color: var(--nambu-cream);
+    text-decoration: underline;
+  }
+
+  /* ── Responsive ───────────────────────────────────────── */
+  @media (max-width: 1200px) {
+    .contact__inner {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .event-types__grid {
+      grid-template-columns: repeat(2, 249px);
+    }
+    .causas__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .clients__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (max-width: 767px) {
+    /* Soluções: swap visibility */
+    .solucoes { display: none; }
+    .solucoes-int { display: block; }
+
+    .site-header {
+      min-height: 122px;
+    }
+    .hero {
+      min-height: 558px;
+      padding: 60px 0;
+    }
+    .hero__title { font-size: 2rem; line-height: 1.2; }
+    .hero__subtitle { font-size: 16px; line-height: 1.4; }
+
+    .sobre { min-height: 308px; }
+    .sobre__title { font-size: 2rem; line-height: 1.2; }
+    .sobre__text { font-size: 16px; }
+    .event-types { min-height: 747px; }
+
+    .event-types__title { font-size: 2rem; line-height: 1.2; }
+    .event-types__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    .event-type__img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+    }
+
+    .causas__title { font-size: 2rem; line-height: 1.2; }
+    .causas {
+      min-height: 857px;
+    }
+    .causas__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    .causa-icon {
+      width: 120px;
+      height: 114px;
+    }
+    .causa-icon img {
+      width: 70px;
+      height: 70px;
+    }
+
+    .gastronomy { min-height: 866px; padding: 60px 0; }
+    .gastronomy__title { font-size: 2rem; line-height: 1.2; }
+    .carousel__item { width: 280px; }
+    .carousel__img { height: 280px; }
+
+    .solucao-row,
+    .solucao-row--reverse {
+      grid-template-columns: 1fr;
+      direction: ltr;
+    }
+    .solucao-row__text { padding: 30px 0; }
+    .solucao-row__img img { height: 280px; }
+    .solucao-row__title { font-size: 2rem; line-height: 1.2; }
+
+    .clients {
+      min-height: 938px;
+    }
+    .clients__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .clients__title { font-size: 2rem; line-height: 1.2; }
+    .clients__logo img {
+      width: 100%;
+      height: auto;
+    }
+
+    .contact { padding: 60px 0; min-height: 1186px; }
+    .contact__inner {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .contact__title { font-size: 2rem; line-height: 1.2; }
+    .contact__sub { font-size: 18px; max-width: 100%; }
+    .contact__obs { font-size: 18px; line-height: 1.5; }
+    .nambu-form { width: 100%; }
+    .site-footer__inner { align-items: flex-start; }
+  }
+</style>
