@@ -10,14 +10,14 @@ const popupConfig = config.forms['popup-937'];
 const webhookUrl = formConfig.webhooks[0];
 
 const waFields = [
+  { key: 'nome',   type: 'text',  label: 'Pra começar, qual é o seu nome? 😊', placeholder: 'Seu nome' },
+  { key: 'tel',    type: 'phone', label: 'Qual é o seu WhatsApp com DDD?', placeholder: '(11) 99999-9999' },
+  { key: 'email',  type: 'email', label: 'E o seu e-mail?', placeholder: 'seu@email.com' },
+  { key: 'empresa', type: 'text', label: 'Qual é o nome da sua empresa?', placeholder: 'Nome da empresa' },
   { key: 'tipo_evento', type: 'select', label: 'Que tipo de evento você precisa? 🥂', options: tipoEventoOptionsCatering },
   { key: 'data_evento', type: 'date', label: 'Qual é a data prevista? 📅', placeholder: 'dd/mm/aaaa' },
   { key: 'convidados', type: 'select', label: 'Quantos convidados aproximadamente?', options: convidadosOptions },
   { key: 'budget', type: 'select', label: 'Qual é o budget disponível?', options: budgetOptions },
-  { key: 'empresa', type: 'text', label: 'Qual é o nome da sua empresa?', placeholder: 'Nome da empresa' },
-  { key: 'nome',   type: 'text',  label: 'Pra começar, qual é o seu nome? 😊', placeholder: 'Seu nome' },
-  { key: 'tel',    type: 'phone', label: 'Qual é o seu WhatsApp com DDD?', placeholder: '(11) 99999-9999' },
-  { key: 'email',  type: 'email', label: 'E o seu e-mail?', placeholder: 'seu@email.com' },
 ];
 
 const clientLogos = [
@@ -181,7 +181,6 @@ const solucoes = [
     <section class="causas">
       <div class="nambu-container">
         <h2 class="causas__title">Causas e compromissos que apoiamos</h2>
-        <hr class="nambu-divider nambu-divider--center causas__divider" />
         <div class="causas__grid">
           {[
             { img: 'gardener',    text: '<strong>Compromisso com pequenos produtores:</strong> valorizamos o mercado local para garantir frescor e qualidade.' },
@@ -208,6 +207,9 @@ const solucoes = [
         <p class="gastronomy__desc">Técnicas diferenciadas, ingredientes frescos e temperos únicos para proporcionar uma mistura incrível de sabores para o seu catering.</p>
       </div>
       <div class="carousel" aria-label="Galeria de gastronomia">
+        <button class="carousel__btn carousel__btn--prev" id="carousel-prev" aria-label="Anterior">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
         <div class="carousel__track" id="carousel-track">
           {carouselImages.map((img) => (
             <div class="carousel__item">
@@ -215,7 +217,9 @@ const solucoes = [
             </div>
           ))}
         </div>
-        <button class="carousel__btn carousel__btn--next" id="carousel-next" aria-label="Próximo">&#8250;</button>
+        <button class="carousel__btn carousel__btn--next" id="carousel-next" aria-label="Próximo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
     </section>
 
@@ -356,8 +360,10 @@ const solucoes = [
         width="362"
         height="35"
       />
-      <p class="site-footer__copy">Copyright &copy; 2025 Nambu Eventos – Todos os direitos reservados</p>
-      <p class="site-footer__dev">Desenvolvimento: <a href="https://www.dmove.com.br" target="_blank" rel="noopener">dmove.com.br</a></p>
+      <div class="site-footer__texts">
+        <p class="site-footer__copy">Copyright &copy; 2025 Nambu Eventos – Todos os direitos reservados</p>
+        <p class="site-footer__dev">Desenvolvimento: <a href="https://www.dmove.com.br" target="_blank" rel="noopener">dmove.com.br</a></p>
+      </div>
     </div>
   </footer>
 
@@ -381,13 +387,33 @@ const solucoes = [
           });
         }
         const track = document.getElementById('carousel-track') as HTMLElement | null;
+        const prevBtn = document.getElementById('carousel-prev');
         const nextBtn = document.getElementById('carousel-next');
-        if (track && nextBtn) {
-          const getW = () => {
+        if (track) {
+          const itemWidth = () => {
             const item = track.querySelector('.carousel__item') as HTMLElement | null;
-            return item ? item.offsetWidth : 460;
+            return item ? item.offsetWidth + 10 : 470;
           };
-          nextBtn.addEventListener('click', () => track.scrollBy({ left: getW(), behavior: 'smooth' }));
+          if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+              const w = itemWidth();
+              if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 2) {
+                track.scrollTo({ left: 0, behavior: 'smooth' });
+              } else {
+                track.scrollBy({ left: w, behavior: 'smooth' });
+              }
+            });
+          }
+          if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+              const w = itemWidth();
+              if (track.scrollLeft <= 2) {
+                track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' });
+              } else {
+                track.scrollBy({ left: -w, behavior: 'smooth' });
+              }
+            });
+          }
         }
       });
     </script>
@@ -573,21 +599,22 @@ const solucoes = [
     line-height: 48px;
     color: var(--nambu-primary);
     text-align: center;
+    max-width: 600px;
+    margin: 0 auto 48px;
   }
-  .causas__divider { margin: 20px auto 48px; }
-  .causas__grid { display: grid; grid-template-columns: repeat(4, 220px); gap: 0; justify-content: center; }
+  .causas__grid { display: grid; grid-template-columns: repeat(4, clamp(173px, calc(-50.3px + 15.51vw), 236px)); gap: 48px; justify-content: center; }
   .causa-icon {
     background: #393A2B;
     border-radius: 0 110px 0 0;
-    width: 173px;
-    height: 164px;
+    width: 100%;
+    height: clamp(164px, calc(32.8px + 9.11vw), 201px);
     padding: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 15px;
   }
-  .causa-icon img { width: 104px; height: 104px; object-fit: contain; }
+  .causa-icon img { width: 60%; height: auto; object-fit: contain; }
   .causa__text {
     color: var(--nambu-olive);
     font-family: 'Roboto', sans-serif;
@@ -612,6 +639,8 @@ const solucoes = [
     font-weight: 600;
     line-height: 48px;
     color: var(--nambu-cream);
+    max-width: 435px;
+    margin: 0 auto;
   }
   .gastronomy__desc {
     font-family: 'Poppins', sans-serif;
@@ -624,39 +653,34 @@ const solucoes = [
   }
 
   /* Carousel */
-  .carousel { position: relative; overflow: hidden; }
+  .carousel { position: relative; overflow: hidden; margin: 0 20px; }
   .carousel__track {
     display: flex;
-    gap: 0;
+    gap: 10px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
   .carousel__track::-webkit-scrollbar { display: none; }
-  .carousel__item { flex-shrink: 0; scroll-snap-align: start; width: 460px; }
-  .carousel__img { width: 100%; height: 504px; object-fit: cover; display: block; border-radius: 0; }
+  .carousel__item { flex-shrink: 0; scroll-snap-align: start; width: calc((100vw - 60px) / 3); }
+  .carousel__img { width: 100%; height: 500px; object-fit: cover; display: block; border-radius: 0; }
   .carousel__btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255,255,255,0.85);
-    color: var(--nambu-primary);
+    background: transparent;
+    color: white;
     border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    font-size: 22px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 2;
-    transition: background 0.2s;
-    line-height: 1;
+    padding: 8px;
   }
-  .carousel__btn:hover { background: #fff; }
-  .carousel__btn--next { right: 16px; }
+  .carousel__btn--prev { left: 20px; }
+  .carousel__btn--next { right: 20px; }
 
   /* ── Soluções desktop (show) / mobile (hide) ──────────── */
   .solucoes { padding: 60px 0; background: var(--nambu-cream); display: block; }
@@ -684,10 +708,10 @@ const solucoes = [
     margin-right: auto;
   }
   .solucoes__desc--light { color: var(--nambu-cream); }
-  .solucao-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0; align-items: center; }
+  .solucao-row { display: grid; grid-template-columns: 557px 1fr; column-gap: 26px; gap: 0; align-items: center; }
   .solucao-row--reverse { direction: rtl; }
   .solucao-row--reverse > * { direction: ltr; }
-  .solucao-row__img img { width: 100%; height: 422px; object-fit: cover; display: block; }
+  .solucao-row__img img { width: 100%; height: 400px; object-fit: cover; display: block; }
   .solucao-row__text { padding: 50px; }
   .solucao-row__title {
     font-family: 'Poppins', sans-serif;
@@ -829,13 +853,13 @@ const solucoes = [
     padding: 14px 0;
   }
   .site-footer__inner {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    text-align: left;
+    display: grid;
+    grid-template-columns: 737px 1fr;
+    align-items: center;
+    gap: 0;
   }
   .site-footer__logo { width: 362px; max-width: 100%; height: auto; display: block; }
+  .site-footer__texts { display: flex; flex-direction: column; gap: 4px; }
   .site-footer__copy,
   .site-footer__dev {
     font-family: 'Poppins', sans-serif;
@@ -844,7 +868,7 @@ const solucoes = [
     line-height: 18px;
     color: var(--nambu-cream);
   }
-  .site-footer__dev a { color: var(--nambu-cream); text-decoration: underline; }
+  .site-footer__dev a { color: var(--nambu-cream); text-decoration: none; }
 
   /* ── Responsive ───────────────────────────────────────── */
   @media (max-width: 1200px) {
@@ -899,6 +923,6 @@ const solucoes = [
     .contact__sub { font-size: 18px; max-width: 100%; }
     .contact__obs { font-size: 18px; line-height: 1.5; }
     .nambu-form { width: 100%; }
-    .site-footer__inner { align-items: flex-start; }
+    .site-footer__inner { grid-template-columns: 1fr; gap: 16px; }
   }
 </style>

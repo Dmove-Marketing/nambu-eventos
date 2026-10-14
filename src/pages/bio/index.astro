@@ -173,18 +173,24 @@ const waFields = [
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 32px;
-    padding: 60px 20px;
+    gap: 0;
+    padding: 110px 20px 60px;
     width: 100%;
     max-width: 520px;
     margin: 0 auto;
   }
 
-  .bio-logo-link { display: block; text-align: center; }
+  .bio-logo-link {
+    display: block;
+    text-align: center;
+    margin-bottom: 50px;
+  }
   .bio-logo {
-    max-width: 400px;
-    width: 80%;
+    width: 400px;
+    max-width: 100%;
     height: auto;
+    display: block;
+    margin: 0 auto;
     filter: brightness(0) invert(1);
     opacity: 0.95;
   }
@@ -194,8 +200,9 @@ const waFields = [
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 11px;
+    gap: 5px;
     width: 100%;
+    margin-bottom: 67px;
   }
 
   .bio-btn {
@@ -204,9 +211,10 @@ const waFields = [
     justify-content: center;
     gap: 8px;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.32);
     border-radius: 10px;
     padding: 0 15px;
+    box-sizing: border-box;
     color: #ffffff;
     font-family: 'Roboto', sans-serif;
     font-size: 16px;
@@ -217,10 +225,10 @@ const waFields = [
   }
   .bio-btn:hover {
     background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 1);
+    border-color: rgba(255, 255, 255, 0.7);
   }
   .bio-btn--buffet,
-  .bio-btn--wa { width: 252px; height: 46px; }
+  .bio-btn--wa { width: 100%; max-width: 342px; height: 52px; }
 
   /* ── Form ─────────────────────────────────────────── */
   .bio-form-wrap { width: 100%; }
@@ -315,10 +323,12 @@ const waFields = [
   }
 
   @media (max-width: 480px) {
-    .bio-logo { width: 75%; }
-    .bio-inner { padding: 40px 16px; gap: 24px; }
+    .bio-logo { width: min(400px, 75%); }
+    .bio-inner { padding: 60px 16px 40px; gap: 0; }
+    .bio-logo-link { margin-bottom: 40px; }
+    .bio-actions { margin-bottom: 50px; gap: 5px; }
     .bio-btn { font-size: 15px; }
     .bio-btn--buffet,
-    .bio-btn--wa { width: 238px; height: 45px; }
+    .bio-btn--wa { max-width: min(342px, 100%); height: 51px; }
   }
 </style>
