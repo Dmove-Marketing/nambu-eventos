@@ -84,11 +84,13 @@ const waFields = [
           <div class="bio-field">
             <input name="nome" type="text" placeholder="Nome completo" aria-label="Nome" required autocomplete="name" />
           </div>
-          <div class="bio-field">
-            <input name="whatsapp" type="tel" placeholder="WhatsApp:" aria-label="WhatsApp" required autocomplete="tel" />
-          </div>
-          <div class="bio-field">
-            <input name="email" type="email" placeholder="E-mail" aria-label="E-mail" required autocomplete="email" />
+          <div class="bio-row">
+            <div class="bio-field">
+              <input name="whatsapp" type="tel" placeholder="WhatsApp:" aria-label="WhatsApp" required autocomplete="tel" />
+            </div>
+            <div class="bio-field">
+              <input name="email" type="email" placeholder="E-mail" aria-label="E-mail" required autocomplete="email" />
+            </div>
           </div>
           <div class="bio-field">
             <select name="tipo_evento" aria-label="Tipo de evento" required>
@@ -96,11 +98,13 @@ const waFields = [
               {tipoEventoOptionsBio.map((o) => <option value={o.value}>{o.label}</option>)}
             </select>
           </div>
-          <div class="bio-field">
-            <input name="data_evento" type="text" placeholder="Data do evento:" aria-label="Data do evento" required autocomplete="off" />
-          </div>
-          <div class="bio-field">
-            <input name="convidados" type="text" inputmode="numeric" placeholder="Nº de convidados" aria-label="Convidados" required />
+          <div class="bio-row">
+            <div class="bio-field">
+              <input name="data_evento" type="text" placeholder="Data do evento:" aria-label="Data do evento" required autocomplete="off" />
+            </div>
+            <div class="bio-field">
+              <input name="convidados" type="text" inputmode="numeric" placeholder="Nº de convidados" aria-label="Convidados" required />
+            </div>
           </div>
           <div class="bio-field">
             <textarea name="mensagem" rows={3} placeholder="Detalhes adicionais:" aria-label="Mensagem"></textarea>
@@ -127,7 +131,10 @@ const waFields = [
 
         const waBtn = document.getElementById('bio-wa-btn');
         const waToggle = document.getElementById('wa-toggle');
-        waBtn?.addEventListener('click', () => waToggle?.click());
+        waBtn?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          waToggle?.click();
+        });
       });
     </script>
   </Fragment>
@@ -212,8 +219,8 @@ const waFields = [
     background: rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 1);
   }
-  .bio-btn--buffet  { width: 102px; height: 46px; }
-  .bio-btn--wa      { width: 252px; height: 46px; }
+  .bio-btn--buffet,
+  .bio-btn--wa { width: 252px; height: 46px; }
 
   /* ── Form ─────────────────────────────────────────── */
   .bio-form-wrap { width: 100%; }
@@ -232,6 +239,14 @@ const waFields = [
     flex-direction: column;
     gap: 0;
   }
+
+  .bio-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .bio-row .bio-field { margin-bottom: 0; }
 
   .bio-field { margin-bottom: 10px; }
 
@@ -303,7 +318,7 @@ const waFields = [
     .bio-logo { width: 75%; }
     .bio-inner { padding: 40px 16px; gap: 24px; }
     .bio-btn { font-size: 15px; }
-    .bio-btn--buffet { width: 98px; height: 45px; }
-    .bio-btn--wa     { width: 238px; height: 45px; }
+    .bio-btn--buffet,
+    .bio-btn--wa { width: 238px; height: 45px; }
   }
 </style>
