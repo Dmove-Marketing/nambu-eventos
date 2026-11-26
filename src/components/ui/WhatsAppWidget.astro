@@ -130,6 +130,13 @@ const introMessages = Astro.props.introMessages ?? [
       <p class="wa-inputbar__error" id="wa-error" role="alert" hidden></p>
     </div>
   </div>
+
+  <!-- Espelho das respostas para o GTM (Enhanced Conversions lê nome/telefone/e-mail daqui quando form_source = whatsapp) -->
+  <form data-wa-form hidden aria-hidden="true" onsubmit="return false">
+    <input type="hidden" name="Nome" id="wa-popup-nome" />
+    <input type="hidden" name="WhatsApp" id="wa-popup-telefone" />
+    <input type="hidden" name="E-mail" id="wa-popup-email" />
+  </form>
 </div>
 
 <script define:vars={{ submitUrl, project, trackingParamKeys, keyMap, phone, fields, introMessages, avatar, staticFonte, formName, observationMessage }}>
@@ -436,6 +443,14 @@ const introMessages = Astro.props.introMessages ?? [
         });
       }
     } catch (_) { /* falha silenciosa */ }
+
+    // preenche o espelho antes do push: o GTM lê a PII do DOM, não do dataLayer
+    const espelho = document.querySelector('[data-wa-form]');
+    if (espelho) {
+      espelho.querySelector('[name="Nome"]').value = payload.Nome || '';
+      espelho.querySelector('[name="WhatsApp"]').value = payload.WhatsApp || '';
+      espelho.querySelector('[name="E-mail"]').value = payload['E-mail'] || '';
+    }
 
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({
